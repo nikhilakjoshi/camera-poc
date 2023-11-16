@@ -4,6 +4,7 @@ import clsx from "clsx";
 import Webcam from "react-webcam";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Konva from "konva";
+import { Camera, CameraType } from "react-camera-pro";
 
 const font = Rubik({
   subsets: ["latin-ext"],
@@ -11,12 +12,13 @@ const font = Rubik({
 
 export default function Home() {
   const webcamRef = useRef<Webcam>(null);
+  const cameraProRef = useRef<CameraType>(null);
   const [isPicClicked, setIsPicClicked] = useState(false);
   const [imgSrc, setImgSrc] = useState<string | null | undefined>(null);
   const [, setScreenShotSrc] = useState<string | null | undefined>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const handleCapture = useCallback(() => {
-    const a = webcamRef.current?.getScreenshot();
+    const a = cameraProRef.current?.takePhoto();
     setImgSrc(a);
     setScreenShotSrc(a);
     setIsPicClicked(true);
@@ -57,8 +59,8 @@ export default function Home() {
         image.filters([Konva.Filters.Brighten, Konva.Filters.Enhance]);
         layer.add(image);
         stage.add(layer);
-        image.brightness(0.3);
-        image.enhance(1);
+        image.brightness(0.2);
+        // image.enhance(0.5);
         // * NEW KONVA FUNCTION ENDS * //
         console.log(image.toDataURL());
       };
@@ -81,7 +83,7 @@ export default function Home() {
       );
     return (
       <div className="relative">
-        <Webcam
+        {/* <Webcam
           ref={webcamRef}
           screenshotFormat="image/png"
           className="w-full"
@@ -93,7 +95,8 @@ export default function Home() {
             noiseSuppression: true,
             echoCancellation: true,
           }}
-        />
+        /> */}
+        <Camera aspectRatio={640 / 980} errorMessages={{}} ref={cameraProRef} />
         <div className="absolute bottom-2 left-0 right-0 flex items-center">
           <button
             onClick={handleCapture}
