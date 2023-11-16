@@ -54,11 +54,13 @@ export default function Home() {
           image: imgRef.current!,
         });
         image.cache();
-        image.filters([Konva.Filters.Brighten]);
+        image.filters([Konva.Filters.Brighten, Konva.Filters.Enhance]);
         layer.add(image);
         stage.add(layer);
-        image.brightness(0.25);
+        image.brightness(0.3);
+        image.enhance(1);
         // * NEW KONVA FUNCTION ENDS * //
+        console.log(image.toDataURL());
       };
     }
   }, [imgSrc]);
@@ -82,11 +84,11 @@ export default function Home() {
         <Webcam
           ref={webcamRef}
           screenshotFormat="image/png"
-          className="w-full rounded-xl"
+          className="w-full"
           videoConstraints={{
             width: { min: 640 },
-            height: { min: 960 },
-            aspectRatio: 0.6666666667,
+            height: { min: 980 },
+            aspectRatio: 0.653,
             facingMode: "environment",
             noiseSuppression: true,
             echoCancellation: true,
@@ -111,10 +113,7 @@ export default function Home() {
   return (
     <>
       <main
-        className={clsx(
-          font.className,
-          "container mx-auto max-w-screen-md px-6 py-4",
-        )}
+        className={clsx(font.className, "container mx-auto max-w-screen-md")}
       >
         <Comp />
         {imgSrc && (
