@@ -2,7 +2,7 @@
 import { Rubik } from "next/font/google";
 import clsx from "clsx";
 import Webcam from "react-webcam";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Konva from "konva";
 import { Camera, CameraType } from "react-camera-pro";
 
@@ -19,13 +19,31 @@ export default function Home() {
     null,
   );
   const imgRef = useRef<HTMLImageElement>(null);
+  const { height, width, ratio, screenShotHeight, screenShotWidth } =
+    useMemo(() => {
+      const height = window.screen.availHeight;
+      const width = window.screen.availWidth;
+      const ratio = width / height;
+      const screenShotHeight = height - 200;
+      const screenShotWidth = screenShotHeight * ratio;
+      return {
+        height,
+        width,
+        ratio,
+        screenShotHeight,
+        screenShotWidth,
+      };
+    }, []);
   const handleCapture = useCallback(() => {
     setScreenShotSrc(null);
     // const a = cameraProRef.current?.takePhoto();
-    const a = webcamRef.current?.getScreenshot();
+    const a = webcamRef.current?.getScreenshot({
+      height,
+      width,
+    });
     setImgSrc(a);
     setIsPicClicked(true);
-  }, []);
+  }, [screenShotHeight, screenShotWidth]);
 
   useEffect(() => {
     if (imgRef.current) {
@@ -62,11 +80,20 @@ export default function Home() {
         image.filters([Konva.Filters.Brighten, Konva.Filters.Enhance]);
         layer.add(image);
         stage.add(layer);
-        image.brightness(0.25);
+        // image.brightness(0.25);
         image.enhance(0.5);
         // * NEW KONVA FUNCTION ENDS * //
-        console.log(image.toDataURL());
-        setScreenShotSrc(image.toDataURL());
+        const croppedDataUrl = image.toDataURL({
+          quality: 1,
+          pixelRatio: 1,
+          mimeType: "image/png",
+          height: screenShotHeight,
+          width: screenShotWidth,
+          x: (image.width() - screenShotWidth) / 2,
+          y: (image.height() - screenShotHeight) / 2,
+        });
+        console.log(croppedDataUrl.split(",")[1]);
+        setScreenShotSrc(croppedDataUrl);
       };
     }
   }, [imgSrc]);
@@ -85,7 +112,7 @@ export default function Home() {
           <div id="canvas" className="hidden"></div>
           <button
             onClick={() => setIsPicClicked(false)}
-            className="absolute right-4 top-12 rotate-90 rounded bg-blue-500 px-4 py-2 text-white"
+            className="absolute right-4 top-12 z-10 rotate-90 rounded bg-blue-500 px-4 py-2 text-white"
           >
             Close
           </button>
@@ -96,11 +123,21 @@ export default function Home() {
         <Webcam
           ref={webcamRef}
           screenshotFormat="image/png"
-          className="h-full w-full"
+          // className="h-full w-full"
+          imageSmoothing={false}
+          screenshotQuality={1}
           videoConstraints={{
-            width: { min: 640 },
-            height: { min: 980 },
-            aspectRatio: 0.653,
+            height: {
+              min: height,
+              ideal: height,
+              max: height,
+            },
+            width: {
+              min: width,
+              ideal: width,
+              max: width,
+            },
+            aspectRatio: ratio,
             facingMode: "environment",
             noiseSuppression: true,
             echoCancellation: true,
@@ -112,13 +149,24 @@ export default function Home() {
           errorMessages={{}}
           ref={cameraProRef}
         /> */}
-        <div className="absolute bottom-2 left-0 right-0 flex items-center">
+        <div className="absolute bottom-2 left-0 right-0 z-10 flex items-center">
           <button
             onClick={handleCapture}
             className="mx-auto aspect-square h-16 rounded-full border-4 border-blue-200 bg-blue-400 bg-opacity-75 outline-1 outline-lime-200"
           ></button>
         </div>
-        <div className="cheque frame inset absolute inset-x-16 bottom-20 top-6 rounded border-2 border-white"></div>
+        <div className="cheque frame absolute inset-0 grid place-items-center">
+          <div
+            className="rounded border-2 border-white"
+            style={{
+              width: screenShotWidth,
+              height: screenShotHeight,
+              // transform: `translateX(${
+              //   (-1 * (width / 2 - screenShotWidth)) / 2
+              // }px)`,
+            }}
+          ></div>
+        </div>
         {/* <div className="absolute -top-1/2 right-1 inline-block h-[80dvh] -translate-y-1/2">
           <span className="rtl inline-block rounded bg-gray-50 px-2 py-0.5 text-sm text-gray-700">
             Place the cheque inside the frame
