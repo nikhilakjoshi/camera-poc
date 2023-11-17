@@ -137,7 +137,7 @@ export default function Home() {
               ideal: width,
               max: width,
             },
-            aspectRatio: ratio,
+            aspectRatio: 1 / ratio,
             facingMode: "environment",
             noiseSuppression: true,
             echoCancellation: true,
