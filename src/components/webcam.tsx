@@ -15,12 +15,14 @@ export default function Home() {
   const cameraProRef = useRef<CameraType>(null);
   const [isPicClicked, setIsPicClicked] = useState(false);
   const [imgSrc, setImgSrc] = useState<string | null | undefined>(null);
-  const [, setScreenShotSrc] = useState<string | null | undefined>(null);
+  const [screenShotSrc, setScreenShotSrc] = useState<string | null | undefined>(
+    null,
+  );
   const imgRef = useRef<HTMLImageElement>(null);
   const handleCapture = useCallback(() => {
+    setScreenShotSrc(null);
     const a = cameraProRef.current?.takePhoto();
     setImgSrc(a);
-    setScreenShotSrc(a);
     setIsPicClicked(true);
   }, []);
 
@@ -59,10 +61,11 @@ export default function Home() {
         image.filters([Konva.Filters.Brighten, Konva.Filters.Enhance]);
         layer.add(image);
         stage.add(layer);
-        image.brightness(0.2);
-        // image.enhance(0.5);
+        image.brightness(0.25);
+        image.enhance(0.5);
         // * NEW KONVA FUNCTION ENDS * //
         console.log(image.toDataURL());
+        setScreenShotSrc(image.toDataURL());
       };
     }
   }, [imgSrc]);
@@ -70,9 +73,15 @@ export default function Home() {
   const Comp = () => {
     if (isPicClicked)
       return (
-        <div className="relative">
-          {/* <canvas id="canvas" className="" ref={canvasRef}></canvas> */}
-          <div id="canvas" className=""></div>
+        <div className="relative h-[100dvh] w-[100dvw]">
+          {screenShotSrc && (
+            <img
+              src={screenShotSrc}
+              alt="test"
+              className="h-[100dvh] w-[100dvw] object-cover"
+            />
+          )}
+          <div id="canvas" className="hidden"></div>
           <button
             onClick={() => setIsPicClicked(false)}
             className="absolute right-4 top-12 rotate-90 rounded bg-blue-500 px-4 py-2 text-white"
@@ -82,7 +91,7 @@ export default function Home() {
         </div>
       );
     return (
-      <div className="relative">
+      <div className="relative h-[100dvh] w-[100dvw]">
         {/* <Webcam
           ref={webcamRef}
           screenshotFormat="image/png"
@@ -96,7 +105,12 @@ export default function Home() {
             echoCancellation: true,
           }}
         /> */}
-        <Camera aspectRatio={640 / 980} errorMessages={{}} ref={cameraProRef} />
+        <Camera
+          facingMode="environment"
+          aspectRatio="cover"
+          errorMessages={{}}
+          ref={cameraProRef}
+        />
         <div className="absolute bottom-2 left-0 right-0 flex items-center">
           <button
             onClick={handleCapture}
