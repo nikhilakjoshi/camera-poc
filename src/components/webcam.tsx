@@ -19,6 +19,7 @@ export default function Home() {
     null,
   );
   const imgRef = useRef<HTMLImageElement>(null);
+
   const { height, width, ratio, screenShotHeight, screenShotWidth } =
     useMemo(() => {
       const height = window.screen.availHeight;
@@ -34,6 +35,7 @@ export default function Home() {
         screenShotWidth,
       };
     }, []);
+
   const handleCapture = useCallback(() => {
     setScreenShotSrc(null);
     // const a = cameraProRef.current?.takePhoto();
@@ -80,7 +82,6 @@ export default function Home() {
         image.filters([Konva.Filters.Brighten, Konva.Filters.Enhance]);
         layer.add(image);
         stage.add(layer);
-        // image.brightness(0.25);
         image.enhance(0.5);
         // * NEW KONVA FUNCTION ENDS * //
         const croppedDataUrl = image.toDataURL({
@@ -161,26 +162,16 @@ export default function Home() {
             style={{
               width: screenShotWidth,
               height: screenShotHeight,
-              // transform: `translateX(${
-              //   (-1 * (width / 2 - screenShotWidth)) / 2
-              // }px)`,
             }}
           ></div>
         </div>
-        {/* <div className="absolute -top-1/2 right-1 inline-block h-[80dvh] -translate-y-1/2">
-          <span className="rtl inline-block rounded bg-gray-50 px-2 py-0.5 text-sm text-gray-700">
-            Place the cheque inside the frame
-          </span>
-        </div> */}
       </div>
     );
   };
 
   return (
     <>
-      <main
-        className={clsx(font.className, "container mx-auto max-w-screen-md")}
-      >
+      <main className={clsx(font.className, "")}>
         <Comp />
         {imgSrc && (
           <img alt="al image" className="hidden" ref={imgRef} src={imgSrc} />
