@@ -21,7 +21,8 @@ export default function Home() {
   const imgRef = useRef<HTMLImageElement>(null);
   const handleCapture = useCallback(() => {
     setScreenShotSrc(null);
-    const a = cameraProRef.current?.takePhoto();
+    // const a = cameraProRef.current?.takePhoto();
+    const a = webcamRef.current?.getScreenshot();
     setImgSrc(a);
     setIsPicClicked(true);
   }, []);
@@ -92,10 +93,10 @@ export default function Home() {
       );
     return (
       <div className="relative h-[100dvh] w-[100dvw]">
-        {/* <Webcam
+        <Webcam
           ref={webcamRef}
           screenshotFormat="image/png"
-          className="w-full"
+          className="h-full w-full"
           videoConstraints={{
             width: { min: 640 },
             height: { min: 980 },
@@ -104,17 +105,17 @@ export default function Home() {
             noiseSuppression: true,
             echoCancellation: true,
           }}
-        /> */}
-        <Camera
+        />
+        {/* <Camera
           facingMode="environment"
           aspectRatio="cover"
           errorMessages={{}}
           ref={cameraProRef}
-        />
+        /> */}
         <div className="absolute bottom-2 left-0 right-0 flex items-center">
           <button
             onClick={handleCapture}
-            className="mx-auto aspect-square h-16 rounded-full border-4 border-white bg-white bg-opacity-75 outline-1 outline-lime-200"
+            className="mx-auto aspect-square h-16 rounded-full border-4 border-blue-200 bg-blue-400 bg-opacity-75 outline-1 outline-lime-200"
           ></button>
         </div>
         <div className="cheque frame inset absolute inset-x-16 bottom-20 top-6 rounded border-2 border-white"></div>
