@@ -124,7 +124,6 @@ export default function Home() {
         <Webcam
           ref={webcamRef}
           screenshotFormat="image/png"
-          // className="h-full w-full"
           imageSmoothing={false}
           screenshotQuality={1}
           videoConstraints={{
@@ -164,6 +163,11 @@ export default function Home() {
               height: screenShotHeight,
             }}
           ></div>
+        </div>
+        <div className="absolute left-0 right-0 top-2">
+          <div className="rounded bg-white">
+            {`screenshotHeight: ${screenShotHeight}, screenshotWidth: ${screenShotWidth}, height: ${height}, width: ${width}, ratio: ${ratio}`}
+          </div>
         </div>
       </div>
     );
